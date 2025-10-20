@@ -126,9 +126,9 @@ To address these challenges, we modeled the problem as an \textbf{Undirected Div
     \item \textbf{Mathematical Analysis and Reinforcement Learning (RL)} for the competitive scenario.
 \end{itemize}
 
-For the cooperative scenario, the graph converts the ``chain building'' into a ``maximum-sum pathfinding'' task. Our implementation ACO achieved a high reward of \textbf{3551}; we verified its performance via the \textbf{Hierarchical Assessment Method}, demonstrating its excellence.
+For the cooperative scenario, the graph converts the ``chain building'' into a ``maximum-sum pathfinding'' task. We developed an Ant Colony Optimization (ACO) algorithm to tackle this problem and evaluated its performance via a Hierarchical Assessment Method.
 
-For the competitive scenario, we modeled the game as a sequential two-player zero-sum game. We first employed the mathematical ways, finding a brilliant opening strategy, given the large latter state space where classical methods are impractical, we propose MAARF where agents Alice and Bob are trained through self-play to discover effective strategies. Our approach focuses on learning strategic patterns, enabling scalable and interpretable policy discovery.
+For the competitive scenario, we modeled the game as a sequential two-player zero-sum game. We first conducted a mathematical analysis to derive promising opening strategies. Then, to navigate the large state space where classical methods are impractical, we propose a Multi-Agent Adversarial Reinforcement Learning (MAARF) framework where agents Alice and Bob are trained through self-play to discover effective strategies. Our approach focuses on learning strategic patterns, enabling scalable and interpretable policy discovery.
 
 The rest of the report is structured as follows: Section 2 details problem analysis and graph modeling. Section 3 covers the ACO solution for the cooperative scenario (modeling + evaluation). Section 4 discusses the mathematical thinking and reinforcement learning method for the competitive scenario (modeling + evaluation). Section 5 concludes and lists references.
 \section{Problem Decomposition and Problem-Graph Modeling}
@@ -176,7 +176,7 @@ Inspired by De Geest et al. (2020)'s OEIS A337125 (longest 77-element chain via 
 \subsection{Model Establishing: Ant Colony Optimization (ACO) --- Optimal Performer}
 ACO was selected for its ability to balance exploration (uncovering new paths) and exploitation (refining high-sum paths) --- a critical fit for our sum-maximization objective.(implementation details in Appendix~\ref{app:aco_code})
 \subsubsection{Core Mechanism}
-ACO simulates ant behavior, with artificial ants traversing graph $G$ to build valid chains, guided by pheromones (collective memory) and heuristics (priorities):
+ACO simulates ant behavior, with artificial ants traversing graph $G$ to build valid chains, guided by pheromones (collective memory) and heuristics (priorities):
 \begin{itemize}
     \item \textbf{Path Construction}: Each ant starts at a random node, iteratively moving to adjacent, unused nodes (following edges $e_{i,j} \in E$) until no valid extensions exist. This strictly enforces the game's ``no-repeat'' and ``divisibility'' constraints without explicit checks.
     \item \textbf{Pheromone Trails $(\tau_{i,j})$}: Encode edge quality—high-sum chains deposit more pheromone (\(\Delta \tau_{i,j}=Q/S_{\text{ant}}\), $Q$=deposition constant), while evaporation (\(\tau_{i,j}=(1-\rho)\tau_{i,j}\), \(\rho\)=rate) avoids stagnation.
@@ -251,7 +251,7 @@ To evaluate the ACO model's effectiveness, we applied a three-layer \textbf{Hier
   \end{tabular}
 \label{tab:reliability}
 \end{table}
-\begin{table}[htpb]
+\begin{table}[H]
   \centering
   \setlength{\tabcolsep}{4pt}
   \caption{Layer 3: Optimization Potential Validation}
@@ -266,6 +266,8 @@ To evaluate the ACO model's effectiveness, we applied a three-layer \textbf{Hier
   \end{tabular}
 \label{tab:optimization}
 \end{table}
+
+
 
 So we can draw the following conclusions:
 \begin{itemize}
