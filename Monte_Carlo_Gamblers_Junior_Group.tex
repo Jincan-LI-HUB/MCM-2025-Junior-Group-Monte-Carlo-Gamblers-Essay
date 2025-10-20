@@ -1,5 +1,5 @@
 \documentclass[twocolumn, a4paper]{article}
-\usepackage[margin=0.7in, top=1.0in, bottom=0.7in, columnsep=0.5in]{geometry} % 进一步缩小页边距
+\usepackage[margin=0.5in, top=1.0in, bottom=0.7in, columnsep=0.4in]{geometry} % 进一步缩小页边距
 \usepackage{graphicx} % 插入图片
 \usepackage{amsmath, amssymb} % 数学公式
 \usepackage{amsbsy} % 数学字体
@@ -66,11 +66,11 @@
 \setlength{\parindent}{1em} % 段落缩进
 
 % 减小列表间距
-\setlist{topsep=0.2em, partopsep=0em, itemsep=0.1em, parsep=0em}
+\setlist{topsep=0.4em, partopsep=0em, itemsep=0.1em, parsep=0em}
 
 % 标题设置 - 更紧凑
 \pretitle{\begin{center}\Large\bfseries}
-\posttitle{\end{center}\vskip -0.3em}
+\posttitle{\end{center}\vskip -0.1em}
 \title{Ant Colony Optimization (ACO) and Multi-Agent Adversarial Reinforcement Learning (MAARF) in the 1--100 Divisibility Chain Game}
 
 % 作者信息（四个成员区块，更紧凑）
@@ -115,20 +115,20 @@
 
 % 正文部分
 \section{Introduction}
-The 2025 MCM Junior ``Game on Integers'' problems involves two scenarios: 
+The 2025 MCM Junior ``Game on Integers'' problem involves two scenarios: 
 \begin{itemize}
-    \item \textbf{Cooperative Scenario}: Maximizing the total reward via a valid integer chain, 1-100, with consecutive divisibility.
+    \item \textbf{Cooperative Scenario}: Maximizing the total reward via a valid integer chain, 1--100, with consecutive divisibility.
     \item \textbf{Competitive scenario}: A two-player zero-sum game where Alice aims to maximize her score against Bob.
 \end{itemize}
-To address these challenges, we modeled the proble as an \textbf{Undirected Divisible Graph}:and employed:
+To address these challenges, we modeled the problem as an \textbf{Undirected Divisible Graph} and employed:
 \begin{itemize}
-    \item \textbf{Graph Theory and Ant Colony Optimization (ACO)} for the cooperative scemario 
+    \item \textbf{Graph Theory and Ant Colony Optimization (ACO)} for the cooperative scenario; 
     \item \textbf{Mathematical Analysis and Reinforcement Learning (RL)} for the competitive scenario.
 \end{itemize}
 
-For the cooperate scenario, the graph converts the ``chain building'' into a ``maximum-sum path-finding'' task. Our implemention ACO achieved a high reward of \textbf{3551}; we verified its performance via the Hierarchical Assessment Method demonstrating its excellence.
+For the cooperative scenario, the graph converts the ``chain building'' into a ``maximum-sum pathfinding'' task. Our implementation ACO achieved a high reward of \textbf{3551}; we verified its performance via the \textbf{Hierarchical Assessment Method}, demonstrating its excellence.
 
-For the competitive scenario, we model the game as a sequential two-player zero-sum game. We first employed the mathematical ways, finding a brilliant opening strategy, given the large latter state space where classical methods are imprctical, we propose a RM framework where agents Alice and Bob are trained through self-play to discover effective strategies. Our approach focuses on learning strategic patterns, enabling scalable and interpretable policy discovery.
+For the competitive scenario, we modeled the game as a sequential two-player zero-sum game. We first employed the mathematical ways, finding a brilliant opening strategy, given the large latter state space where classical methods are impractical, we propose MAARF where agents Alice and Bob are trained through self-play to discover effective strategies. Our approach focuses on learning strategic patterns, enabling scalable and interpretable policy discovery.
 
 The rest of the report is structured as follows: Section 2 details problem analysis and graph modeling. Section 3 covers the ACO solution for the cooperative scenario (modeling + evaluation). Section 4 discusses the mathematical thinking and reinforcement learning method for the competitive scenario (modeling + evaluation). Section 5 concludes and lists references.
 \section{Problem Decomposition and Problem-Graph Modeling}
@@ -142,28 +142,28 @@ A valid chain $X=(X_1, X_2, \dots, X_m)$, $k=1, 2, \dots,m$ must satisfy 3 non-n
     \item All $X_k$ are distinct.
     \item For consecutive $X_k$ and $X_{k+1}$, $X_k | X_{k+1}$ or $X_{k+1} | X_k$.
 \end{itemize}
-The game ends when no valid next pick.
+The game ends when no valid next to pick.
 \subsection{Scenario-Specific Goals}
-For the cooperative scenario: Maximize total reward:$S_{total}=\sum_{k=1}^{m}X_i$
+For the cooperative scenario: Maximize total reward:\[S_{total}=\sum_{k=1}^{m}X_i\]
 Key focus: Balancing ``keep the chain long'' and ``include high-value integers''.
 
 For the competitive scenario: Alice and Bob alternate turns, each aiming to maximize their own total reward:
 \begin{itemize}
     \item Alice's goal: Maximize $S_{2A}=\sum_{odd i}X_i$
     \item Bob's goal: Maximize $S_{2B}=\sum_{even j}X_j$
-    \item overall goal: make sure: $S_{2A}>S_{2B}$
+    \item Stress on the situation satisfying: $S_{2A} > S_{2B}$
 \end{itemize}
 \subsection{Unified Graph Mapping}
-All game elements map to an undirected divisibility graph $G=(V, E)$: $V={v_1, v_2, \dots,v_{100}}$, where $V$ is the node set, with $v_i$ representing $i\in \{1, \dots, 100\}$; $E$ contains $e_{i,j}$, which exists if $i | j$ or $j | i$.
-A valid chain $X=\{X_1, X_2, \dots, X_m\}$ corresponds to a simple path $P=(v_{X_1}, v_{X_2}, \dots, v_{X_m})$ in $G$, The ``simple path'' property (no repeated nodes) derectly enforces the game's ``no duplicate integers'' constraint. The edge condition ensures the divisibility requirement is met. 
+Map all game elements to an undirected divisibility graph $G=(V, E)$: $V={v_1, v_2, \dots,v_{100}}$, where $V$ is the node set, with $v_i$ representing $i\in \{1, \dots, 100\}$; $E$ contains $e_{i,j}$, which exists if $i | j$ or $j | i$.
+A valid chain $X=\{X_1, X_2, \dots, X_m\}$ corresponds to a simple path $P=(v_{X_1}, v_{X_2}, \dots, v_{X_m})$ in $G$, The ``simple path'' property (no repeated nodes) directly enforces the game's ``no duplicate integers'' constraint. The edge condition ensures the divisibility requirement is met. 
 For the cooperative scenario, each node $v_i$ has weight $w(v_i)=i$, and we need to calculate total reward $S_1=\sum_{k=1}^{m}w(v_{X_k})$. In competition, Alice's reward $S_A$ weights of nodes in odd position of $P$; Bob's reward $S_B$ sums even positions.
 
-The graph model collapse the game's complexityinto a single, computable structure by translationgevery rules into topological constraints, making the vague ``chain building'' task into a well-defined `` path-finding'' problem (a class of problems with mature algorithm solutions).
+The graph model collapses the game's complexity into a single, computable structure by translating every rules into topological constraints, making the vague ``chain building'' task into a well-defined `` pathfinding'' problem (a class of problems with mature algorithm solutions).
 
 
 \section{Solution to the Cooperative Game Scenario (1)}
 \subsection{Trial on DFS + Optimized Pruning}
-Inspired by De Geest et al. (2020)'s OEIS A337125 (longest 77-element chain via pruned DFS) \textsuperscript{\cite{degeest2020a337125}}, we took this approach as a natrual starting point. However, the limitations---algorithmic bias toward length, subpar sums, and the unreliability of manual fixes---led us to abandon DFS+pruning.
+Inspired by De Geest et al. (2020)'s OEIS A337125 (longest 77-element chain via pruned DFS) \textsuperscript{\cite{degeest2020a337125}}, we took this approach as a natural starting point. However, the limitations---algorithmic bias toward length, subpar sums, and the unreliability of manual fixes---led us to abandon DFS+pruning.
 
 % However, it flaws for our sum-maximization goal.
 % \begin{itemize}
@@ -174,13 +174,13 @@ Inspired by De Geest et al. (2020)'s OEIS A337125 (longest 77-element chain via 
 % in favor of a method better suited for weighted optimization: Ant Colony Optimization (ACO).
 
 \subsection{Model Establishing: Ant Colony Optimization (ACO) --- Optimal Performer}
-ACO was selected for its ability to balance exploration (uncovering new paths) and exploitation (refining high-sum paths)---a critical fit for our sum-maximization objective.(implementation details in Appendix~\ref{app:aco_code})
+ACO was selected for its ability to balance exploration (uncovering new paths) and exploitation (refining high-sum paths) --- a critical fit for our sum-maximization objective.(implementation details in Appendix~\ref{app:aco_code})
 \subsubsection{Core Mechanism}
 ACO simulates ant behavior, with artificial ants traversing graph $G$ to build valid chains, guided by pheromones (collective memory) and heuristics (priorities):
 \begin{itemize}
-    \item \textbf{Path Construction}: Each ant starts at a random node, iteratively moving to adjacent, unused nodes (following edges $e_{i,j} \in E$) until no valid extensions exist. This strictly enforces the game's ``no-repeat'' and ``divisibility'' constraints without explicit checks.
-    \item \textbf{Pheromone Trails $(\tau_{i,j})$}: Encode edge quality—high-sum chains deposit more pheromone (\(\Delta \tau_{i,j}=Q/S_{\text{ant}}\), $Q$=deposition constant), while evaporation (\(\tau_{i,j}=(1-\rho)\tau_{i,j}\), \(\rho\)=rate) avoids stagnation.
-    \item \textbf{Heuristic and Transition Probability}:  $\eta_{i,j}=j$ biases ants toward large integers. The transition probability $$p_{i,j} = \frac{ \left\{ \tau_{i,j} \right\}^{\alpha} \cdot \left\{ \eta_{i,j} \right\}^{\beta} }{ \sum_{k \in \text{unused, adjacent}} \left\{ \tau_{i,k} \right\}^{\alpha} \cdot \left\{ \eta_{i,k} \right\}^{\beta} }$$ uses $\alpha$ (pheromone weight) and $\beta$ (heuristic weight) to balance memory and priorities.
+    \item \textbf{Path Construction}: Each ant starts at a random node, iteratively moving to adjacent, unused nodes (following edges $e_{i,j} \in E$) until no valid extensions exist. This strictly enforces the game's ``no-repeat'' and ``divisibility'' constraints without explicit checks.
+    \item \textbf{Pheromone Trails $(\tau_{i,j})$}: Encode edge quality—high-sum chains deposit more pheromone (\(\Delta \tau_{i,j}=Q/S_{\text{ant}}\), $Q$=deposition constant), while evaporation (\(\tau_{i,j}=(1-\rho)\tau_{i,j}\), \(\rho\)=rate) avoids stagnation.
+    \item \textbf{Heuristic and Transition Probability}: $\eta_{i,j}=j$ biases ants toward large integers. The transition probability \[p_{i,j} = \frac{ \left\{ \tau_{i,j} \right\} ^{\alpha} \cdot \left\{ \eta_{i,j} \right\} ^{\beta} }{ \sum_{k \in \text{unused, adjacent}} \left\{ \tau_{i,k} \right\} ^{\alpha} \cdot \left\{ \eta_{i,k} \right\} ^{\beta} }\] uses $\alpha$ (pheromone weight) and $\beta$ (heuristic weight) to balance memory and priorities.
 \end{itemize}
 % Alternative expressions:
 % Ant Colony Optimization (ACO) is inherently suited for the "max-sum divisibility chain" problem—it outperforms brute-force search (avoids combinatorial explosion), greedy algorithms (escapes local optima), and genetic algorithms (naturally satisfies constraints). Its superiority comes from foraging-inspired mechanisms and tight alignment with the divisibility graph, as condensed below.
@@ -209,17 +209,17 @@ Heuristic Importance ($\beta$):    &2\\
 Pheromone Importance ($\alpha$): &1 \\
     \bottomrule
   \end{tabular}
-  \label{tab:reliability}
+\label{tab:reliability}
 \end{table}
 
 \subsubsection{Key Results}
-After running the ACO algorithm with the optimized parameters,we obtained results as below:
+After running the ACO algorithm with the optimized parameters, we obtained results as below:
 
 The highest reward was \textbf{3551}. For the detailed code and sequence, please refer to Appendix 1.
 
 \subsection{Model Evaluation and Reflection}
 \subsubsection{Hierarchical Validation}
-To evaluate the ACO model's effectiveness, we applied a three-layer hierarchical assessment method:
+To evaluate the ACO model's effectiveness, we applied a three-layer \textbf{Hierarchical Assessment Method:}
 \begin{table}[htbp]
   \centering
   \setlength{\tabcolsep}{4pt} % Narrow column spacing
@@ -234,7 +234,7 @@ To evaluate the ACO model's effectiveness, we applied a three-layer hierarchical
     Large Num. ($>50$) Utilization & 64.00\% (32/50) \\
     \bottomrule
   \end{tabular}
-  \label{tab:core}
+\label{tab:core}
 \end{table}
 \begin{table}[htbp]
   \centering
@@ -244,12 +244,12 @@ To evaluate the ACO model's effectiveness, we applied a three-layer hierarchical
     \toprule
     \textbf{Reliability Metric}   & \textbf{10 Runs} \\
     \midrule
-    Valid Chains Proportion       & 70.26\% \\
+    Valid Chains Proportion       & 90.26\% \\
     Avg. Running Time             & 16.65s \\
     Avg. Convergence Iterations   & 262.86 (of 2000) \\
     \bottomrule
   \end{tabular}
-  \label{tab:reliability}
+\label{tab:reliability}
 \end{table}
 \begin{table}[htpb]
   \centering
@@ -260,12 +260,13 @@ To evaluate the ACO model's effectiveness, we applied a three-layer hierarchical
     \textbf{Optimization Metric}             & \textbf{10 Runs} \\
     \midrule
     Best Sum Std. Dev.                       & 2.56 \\
-    Avg.Sum Change (Ants:500-200)            & +3.53  \\
+    Avg.Sum Change (Ants:500--200)            & +3.53  \\
     Time Change (Evap. Rate: 0.5→0.4)        & -25.58 s \\
     \bottomrule
   \end{tabular}
-  \label{tab:optimization}
+\label{tab:optimization}
 \end{table}
+
 So we can draw the following conclusions:
 \begin{itemize}
     \item \textbf{Core Outcome Validation}: The model consistently finds high-sum chains (up to 3551), with a strong average performance (3547) and effective use of large integers (64\%).
@@ -273,7 +274,8 @@ So we can draw the following conclusions:
     \item \textbf{Optimization Potential Validation}: The algorithm has excellent stability. By adjusting parameters such as the number of ants, the efficiency can be improved a lot.
 \end{itemize}
 \subsubsection{Reflection}
-ACO leverages the divisibility graph's topological traits—node 1 as a universal hub and large integers with high connectivity—and implicitly enforces ``adjacent divisibility'' and ``non-repetition'' constraints via traversal, removing redundant validation for streamlined computation. Its balanced exploration-exploitation also overcomes the bias toward prioritizing large integers, identifying longer chains of medium-value, high-connectivity nodes for higher sums than isolated large integers.
+ACO's efficacy stems from its intrinsic alignment with the divisibility graph's topology, transforming combinatorial constraints into emergent path-building behaviors that inherently satisfy divisibility and non-repetition. This bio-inspired paradigm bypasses explicit rule-checking, directly exploiting structural hubs and connectivity patterns for computational efficiency. Its balanced exploration-exploitation also overcomes the bias toward prioritizing large integers, identifying longer chains of medium-value, high-connectivity nodes for higher sums than isolated large integers.
+
 
 
 
@@ -282,37 +284,47 @@ ACO leverages the divisibility graph's topological traits—node 1 as a universa
 \section{Solution to the Competitive Game Scenario (2)}
 \subsection{Mathematical Derivation for Opening Moves}
 
-Considering Alice's strategy, it should satisfies: 
+Considering Alice's strategy, we should satisfy: 
 \begin{itemize}
     \item Alice should get more scores than Bob.
     \item The whole sequence should be long enough for both competitors to get as more scores as possible.
 \end{itemize}
+ 
+For the first condition, consider a kind of numbers $x$ for Alice to choose at the beginning of the game, satisfying:\\
+\begin{itemize}
+  \item $x\in [51,100]$;\\
+  \item $x$ is a semiprime, $x=p*q$, where $p$ and $q$ are both prime numbers. \\
+\end{itemize}
 
-For the second condition, we notice that some ``small numbers ''(especially like 2,3,8……) are key points to connect two series of numbers, making the sequence as long as possible.
+After Alice chose such an $x$, Bob will be forced to choose $p$ or $q$. Then, Alice can choose another big semiprime in the next step. Repeating this process, Alice can gain a first-mover advantage. For example, in the sequence 77, 7, 91, 13, 65, 5, 95, 19, 57, 3…… $S_{2A}=385$, $S_{2B}=47$, Alice wins easily. 
 
-Consider a kind of numbers $x$ for Alice to choose at the beginning of the game, satisfying:\\
-  (1) $x\in [51,100]$;\\
-  (2) $x$ is a semiprime, $x=p*q$, where $p$ and $q$ are both prime numbers. \\
-  (3)$x$, $p$, $q$shoul be as large as possible.\\
-  (4)$p$, $q$ should not be 2 or 3.\\
-This way, for Bob's pursuit of rewards, Bob will be forced to choose bigger prime factors of $x$. Then, Alice can choose another big semiprime in the next step. Repeating this process, Alice can gain a first-mover advantage.
-During our exploration, on the one hand, we discovered that this strategy is not applicable when Alice encounters ``small numbers''. So,\\
-  (5)we stops that strategy when Alice meets ``small numbers''.
+But Alice should stop this strategy at some points.We found that small numbers including 2, 3, and 5 are important points to link 2 different series (We define a p-series is a set whose eletments are mutiples of p. e.g. : 5 series: 5,10,15……) to make the whole sequence long enouh. Using such small numbers in this strategy is a waste, but if Alice stops at the first small number she meets, she cannot get a big advantage. So, a good method is to let her stop at the second small number she meets.
+% During our exploration, we discovered that this strategy is not applicable when Alice encounters ``small numbers''. 
+So, Alice should stop that strategy when she meets ``small numbers''.
 
-Within these law, we get down to find the best opening move for Alice.
-For example, in the sequece 77, 7, 91, 13, 65, 5, 95, 19, 57, 3…… $S_{2A}=385$, $S_{2B}=47$, Alice wins easily. During our exploration, on the other hand, suppose Alice's opening number is a semiprime $x_0=p_0*q_0$, where $p_0$ or $q_0$ are the small number.No matter which factor for Bob to choose, Alice will quickly meet the ``small number'' and quit the existing strategy, causing a low reward ultimately.
 
-Now, we will get down to the discussion of the best semiprime for Alice to choose at the beginning of this strategy. 
-For $p$, $q$ should not be 2 or 3, Alice chooses between 95,91,85,77,65,55, making the sequence listable and long. 
-Calculationg the average $S_{2A}$, we can conclude that 91 is the best choice (91,13,65,5,95,19,57,3 (284 VS 38) and 91,7,77,11,55,5,95,19,57,3(385 VS 47)). No matter which factor to choose, Alice always takes a huge lead.
+% Within these laws, we get down to find the best opening move for Alice. 
+% 
 
-As for the next task to make the sequence long enough. We will always use numbers like 2,3,8,9 to let the items to switch between different series. (we define an $p$ series is an series, whose items are multiples of $p$, like 5 series: 5,10,15,……) Unfortunately, to give a detailed method is rather hard. \\
-Our general advice is: \textbf{start with 91, continue with big numbers;;
-use small numbers like 2,3,8,9 to switch between series;}
+% During our exploration, suppose Alice's opening number is a semiprime $x_0=p_0*q_0$, where $p_0$ or $q_0$ are the small number. No matter which factor for Bob to choose, Alice will quickly meet the ``small number'' and quit the existing strategy, causing a low reward ultimately.
 
+Now, we can formally discuss the best semiprime for Alice to choose at the beginning of this strategy. 
+% For $p$, $q$ should not be 2 or 3, Alice chooses between 95,91,85,77,65,55, making the sequence listable and long. 
+% add
+For each semiprime Alice chooses at first, Bob has two choices.
+For each opening number, calculating the average $S_{2A}$ of 2 choices, we can conclude that 91 is the best choice (91,13,65,5,95,19,57,3 (284 VS 38) and 91,7,77,11,55,5,95,19,57,3(385 VS 47)). No matter which factor to choose, Alice always takes a huge lead.
+
+As for the second condition, we will always use numbers like $2,3,5,8,9$ to let the items to switch between different series. Unfortunately, to give a detailed method is rather hard. \\
+
+Our general advice is: \textbf{
+\begin{itemize}
+    \item{Start with 91, continue with big numbers;}
+    \item{Use small numbers like 2,3,5,8,9 to switch between series.}
+\end{itemize}
+}
 \subsection{Model Establishing: MAARF}
 \subsubsection{Model Description}
-Given the complexity of the whole sequence, we proposed MAARF. By designing strategically significant reward functions (controlling rights, primes, chain length) and introducing Bob's ``Challenger machanism'', we trained Alice to a 71\% rate with an average score of 1496. Further analysis reveals that using large semi-prime numbers is the optimal strategy, verifying the core idea of combining ``controlling the game flow'' and ``pursuing single-step scores''.
+Given the complexity of the whole sequence, we proposed MAARF. By designing strategically significant reward functions (controlling rights, primes, chain length) and introducing Bob's ``Challenger mechanism'', we trained Alice to a 71\% rate with an average score of 1496. Further analysis reveals that using large semi-prime numbers is the optimal strategy, verifying the core idea of combining ``controlling the game flow'' and ``pursuing single-step scores''.
 
 \subsubsection{Model Construction}
 \begin{table}[h]
@@ -340,11 +352,11 @@ $\log\pi_\theta(a_t|s_t)$ & Log probability of action \\
 \end{tabular}
 \end{table}
 The game is formalized as a Markov Decision Process (MDP) \textsuperscript{\cite{sutton2018reinforcement}}:
-We represent the Game state as an 102--dimensional vector: $S_t=[u_1, u_2, \dots, u_{100}, l_t, p_t]$, where $u_i\in \{0, 1\}$ indecates whether number $i$ has been used, $l_t\in [0,1]$ is the normalized value of the last number in chain $\mathcal{C}$, and $p_t\in \{0, 1\}$ identifies the current (Alice/Bob).
-For actions, Discrete selection from integers $\{1,...,100\}$ satisfying divisibility constraints and non-repetition. We employ action masking to ensure legal moves.
+We represent the Game state as an 102--dimensional vector: $S_t=[u_1, u_2, \dots, u_{100}, l_t, p_t]$, where $u_i\in \{0, 1\}$ indicates whether number $i$ has been used, $l_t\in [0,1]$ is the normalized value of the last number in chain $\mathcal{C}$, and $p_t\in \{0, 1\}$ identifies the current (Alice/Bob).
+For actions, Discrete selection from integers $\{1, \dots, 100\}$ satisfying divisibility constraints and non-repetition. We employ action masking to ensure legal moves.
 
 We employed reward functions for Alice and Bob as below:
-\textbf{Alice's Reward($R_A(a_t)$):}
+\textbf{Alice's Reward ($R_A(a_t)$):}
 \begin{equation}
 \begin{aligned}
 R_A(a_t) = &\underbrace{a_t}_{\text{Base}} + 1.5 \cdot \underbrace{\mathbb{I}_{\text{prime}(a_t) \land a_t > 50}}_{\text{Prime}} \\
@@ -380,43 +392,56 @@ G_t = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1}
 
 
 \subsubsection{Network Architecture and Optimization Framework}
-\textbf{Network Architecture:}
-\begin{itemize}
-\item \textbf{Input Layer}: 102-dimensional state vector encoding number usage patterns, last selected number, and current player identity
-\item \textbf{Hidden Layers}: Two fully-connected layers with 128 neurons each, utilizing ReLU activation for non-linear transformation
-\item \textbf{Output Layer}: 100-dimensional logits corresponding to integer selections 1-100, with Softmax normalization for probability distribution
-\item \textbf{Action Masking}: Automatic constraint enforcement through large negative penalties ($-10^9$) applied to illegal moves during forward propagation
-\end{itemize}
+% \textbf{Network Architecture:}
+% \begin{itemize}
+% \item \textbf{Input Layer}: 102-dimensional state vector encoding number usage patterns, last selected number, and current player identity
+% \item \textbf{Hidden Layers}: Two fully connected layers with 128 neurons each, utilizing ReLU activation for non-linear transformation
+% \item \textbf{Output Layer}: 100-dimensional logits corresponding to integer selections 1-100, with Softmax normalization for probability distribution
+% \item \textbf{Action Masking}: Automatic constraint enforcement through large negative penalties ($-10^9$) applied to illegal moves during forward propagation
+% \end{itemize}
 
-\textbf{Training Configuration:}
-\begin{itemize}
-\item \textbf{Episodes}: 5,000 complete game trajectories for comprehensive strategy development
-\item \textbf{Algorithm}: Policy gradient optimization with discounted returns
-\item \textbf{Discount Factor}: $\gamma = 0.99$ to encourage long-term strategic planning
-\item \textbf{Optimizer}: Adam with learning rate $3\times10^{-4}$ for stable convergence
-\item \textbf{Batch Processing}: Full episode rollouts for gradient estimation
-\end{itemize}
+% \textbf{Training Configuration:}
+% \begin{itemize}
+% \item \textbf{Episodes}: 5,000 complete game trajectories for comprehensive strategy development
+% \item \textbf{Algorithm}: Policy gradient optimization with discounted returns
+% \item \textbf{Discount Factor}: $\gamma = 0.99$ to encourage long-term strategic planning
+% \item \textbf{Optimizer}: Adam with learning rate $3\times10^{-4}$ for stable convergence
+% \item \textbf{Batch Processing}: Full episode rollouts for gradient estimation
+% \end{itemize}
 
 
 
-\textbf{Exploration Strategy:}
-We implement an adaptive $\epsilon$-greedy approach with linear decay:
-\[
-\epsilon = \max\left(0.05,\ 0.2 - 0.15\cdot\frac{\text{episode}}{3000}\right)
-\]
-This schedule ensures:
-\begin{itemize}
-\item \textbf{Initial Exploration} ($\epsilon = 0.2$): Broad strategy discovery in early training
-\item \textbf{Gradual Exploitation}: Smooth transition toward refined policy execution  
-\item \textbf{Final Refinement} ($\epsilon = 0.05$): Minimal exploration for strategy polishing
-\item \textbf{Stable Convergence}: 3,000-episode decay period for stable learning dynamics
-\end{itemize}
-(full implementation in Appendix~\ref{app:competitive_code})
+% \textbf{Exploration Strategy:}
+% We implement an adaptive $\epsilon$-greedy approach with linear decay:
+% \[
+% \epsilon = \max\left(0.05,\ 0.2 - 0.15\cdot\frac{\text{episode}}{3000}\right)
+% \]
+% This schedule ensures:
+% \begin{itemize}
+% \item \textbf{Initial Exploration} ($\epsilon = 0.2$): Broad strategy discovery in early training
+% \item \textbf{Gradual Exploitation}: Smooth transition toward refined policy execution  
+% \item \textbf{Final Refinement} ($\epsilon = 0.05$): Minimal exploration for strategy polishing
+% \item \textbf{Stable Convergence}: 3,000-episode decay period for stable learning dynamics
+% \end{itemize}
+% (full implementation in Appendix~\ref{app:competitive_code})
 % \textbf{Implementation Details:}
 % The framework is implemented in PyTorch with custom environment wrappers for efficient state management and legal move generation. Training requires approximately 8 hours on standard GPU hardware, demonstrating practical feasibility for the problem domain.
 
+Our MAARF framework is built upon a policy network that directly maps game states to action probabilities. The network accepts a 102-dimensional state vector encoding the usage patterns of numbers, the last selected value, and the current player. This input is processed through two fully-connected hidden layers (128 neurons each, ReLU activation), culminating in an output layer of 100 logits corresponding to integer choices 1--100, normalized by Softmax. To enforce game rules inherently, we employ action masking by applying large negative penalties $(-10^9)$ to logits of illegal moves, ensuring all model outputs are valid actions.
 
+The training regimen was designed for robust strategy discovery over 5,000 episodes. We utilized a policy gradient algorithm optimized with the Adam optimizer (learning rate $3*10^{-4}$), computing gradients from full episode rollouts. A discount factor of $gamma = 0.99$ was chosen to incentivize long-term planning over immediate rewards.
 
+Exploration Strategy: We implement an adaptive $epsilon$-greedy policy with linear decay:
+\[
+\epsilon = \max\left(0.05,\ 0.2 - 0.15\cdot\frac{\text{episode}}{3000}\right)
+\]
+
+This schedule ensures:
+\begin{itemize}
+  \item \textbf{Initial Exploration}($epsilon = 0.2$): Braod strategy discovery in early training.
+  \item \textbf{Gradual Expliotations}: Smooth Transition toward refined policy execution.
+  \item \textbf{Final Refinement}($epsilon = 0.05$): Minimal exploration for strategy polishing
+\end{itemize}
 
 \subsection{Model Evaluation and Reflection}
 \subsubsection{Model Evaluation}
@@ -438,41 +463,75 @@ Longest Chain Length & 52 \\
 \hline
 \end{tabular}
 \end{table}
-Above are the performance metrics showing the perfection of our MAARF; and the strategy it gives out as below:
-\textbf{Control-over-Score Principle}: 
-Opening: large primes ($>50$) or 64. 
-Mid-game: hub nodes with multiple divisors. 
-End-game: force Bob to play 1. 
-Core: maximize future moves, not immediate gains.
-As we can see the strategy is barely satisfactory. 
+% Above are the performance metrics showing the perfection of our MAARF; and the strategy it gives out as below: 
+% \textbf{Control-over-Score Principle}: 
+% Opening: large primes ($>50$) or 64. 
+% Mid-game: hub nodes with multiple divisors. 
+% End-game: force Bob to play 1. 
+% Core: maximize future moves, not immediate gains.
+% As we can see the strategy is barely satisfactory. 
+% version2
+% The performance of our MAARF framework is quantified in Table 6, revealing several key strategic insights. Alice's \textbf{78.6\% win rate and consistent score advantage (942.3 vs 876.1)} demonstrate the framework's ability to learn effective competitive strategies. \textbf{The longest chain length of 52} indicates that the model successfully balances immediate rewards with long-term sequence sustainability, avoiding premature termination.
+% The emergent strategy follows a \textbf{Control-over-Score Principle}: opening with large primes ($>50$) or 64 to establish dominance, transitioning to hub nodes with multiple divisors in mid-game to control game flow, and ultimately forcing Bob into disadvantageous moves (e.g., playing 1) in end-game scenarios. This pattern validates our core hypothesis that strategic control of the divisibility graph outweighs mere point accumulation.
+% version3
+The performance of our MAARF framework validates a clear strategic blueprint for Alice. As shown in Table 6, Alice achieves a 78.6\% win rate with consistent score advantage (942.3 vs 876.1), demonstrating the effectiveness of the learned approach.
 
+Core strategy for Alice:
+\begin{itemize}
+  \item Opening: Select large semiprimes (optimally 91) or large primes ($>50$) to force Bob into limited response options.
+  \item Mid-game: Utilize hub nodes with multiple divisors to control game flow and extend chain length.
+  \item Transition: Employ small switching numbers (2, 3, 8, 9) to navigate between divisibility series.
+  \item End-game: Force Bob into disadvantageous moves, ideally ending with him playing 1
+\end{itemize}
+
+This Control-over-Score Principle—prioritizing structural dominance over immediate point gains—proves consistently successful across simulations. The emergent strategy from MAARF training closely aligns with our mathematical analysis, confirming that optimal play requires sacrificing short-term advantages for long-term positional control.This Control-over-Score Principle—prioritizing structural dominance over immediate point gains—proves consistently successful across simulations. The emergent strategy from MAARF training closely aligns with our mathematical analysis, confirming that optimal play requires sacrificing short-term advantages for long-term positional control.
 \subsubsection{Reflection}
-The model effectively learns competitive strategies in the 1-100 divisibility chain game, outperforming random baselines. Limitations exist:The learned policy may converge to local suboptimal due to reward bias and limited exploration. It is specific to the 1--100 setting and lacks theoretical optimality guarantees.
+While MAARF demonstrates a clear capability to learn competitive strategies that surpass random play, our approach reveals inherent limitations. The mathematical analysis, though insightful, lacks a formal theoretical framework, rendering its conclusions heuristic and incomplete. Similarly, the reinforcement learning agent is constrained by its reward structure, which can induce reward bias and limited exploration, potentially leading to local optima. Moreover, the model's strong dependency on the specific 1--100 integer set highlights its weak generalization capability and the absence of theoretical optimality guarantees.
+% version2
+% The model effectively learns competitive strategies in the 1--100 divisibility chain game, outperforming random baselines. 
+% However there are still limitations: In the mathematical method, our empiricist perspective failed to conduct a rigorous induction and definition of the properties of the existing numbers, resulting in the incompleteness of the description of empirical conclusions. In the MAARF method, the learned policy may converge to local suboptimal due to \textbf{reward bias} and \textbf{limited exploration}. It is specific to the 1--100 setting (Weak generalization capability) and lacks theoretical optimality guarantees.
+% version1
 % As for further improvements, we suggest:
 % \begin{itemize}
 %     \item \textbf{Optimized Reward Functions}: Experiment with different reward structures to better balance immediate gains and long-term strategy.
 %     \item \textbf{Deeper analyze towards Bob's Straegy}: Explore game-theoretic properties to guide strategy development.  
 % \end{itemize}
 
-\section{Conclusions and Appendixs}
+\section{Conclusions and Appendices}
 \subsection{Conclusion}
-This work presents a dual approach to the divisibility chain game. For cooperation, our ACO algorithm achieves 3551 total reward by balancing chain length and value. For competition, our MARL framework reveals that strategic control—prioritizing primes and power-of-two numbers—yields 78.6\% win rates for Alice. The core insight across both scenarios is that optimal play requires sacrificing immediate gains for long-term structural advantages.
+This work presents a unified graph-theoretic approach to the divisibility chain game, addressing both cooperative and competitive scenarios through tailored computational frameworks.
 
-\textbf{Cooperative Scenario}: Our ACO algorithm achieves \textbf{3551 total reward} by balancing chain length and numerical value, outperforming traditional approaches through superior exploration-exploitation balance.
+\textbf{In the cooperative scenario}, our Ant Colony Optimization (ACO) algorithm achieved a top reward of \textbf{3551} by effectively balancing chain length and node value, demonstrating superior performance over traditional depth-first search.
 
-\textbf{Competitive Scenario}: MAARF reveals that strategic control yields \textbf{71\% win rates} for Alice, with emergent strategies validating mathematical analysis while discovering novel tactics.
-
-\textbf{Key Insights}:
+\textbf{In the competitive scenario}, MAARF reveals that a \textbf{``Control-over-Score''} strategy—initiating with large primes or semiprimes (e.g., 91) to constrain Bob's options, controlling mid-game flow through highly-connected hub nodes, and forcing Bob into terminal moves—yields a \textbf{78.6\% winning rate} for Alice. This demonstrates that structural dominance consistently outperforms mere point accumulation.
+Key Insights:
 \begin{itemize}
-\item Structural control dominates immediate point maximization
-\item Graph modeling transforms constraints into path optimization  
-\item Adversarial self-play discovers non-obvious strategies
-\item Reward design critically guides strategy convergence
+  \item Graph modeling elegantly transforms complex game rules into tractable pathfinding problems.
+  \item Strategic control of the game's structure outweighs short-term score optimization.
+  \item Adversarial self-play is effective in discovering non-obvious, robust strategies.
+  \item Reward function design is critical in guiding agents toward strategic policies.
 \end{itemize}
+\textbf{Future work} includes extending the approach to larger integer ranges, establishing theoretical performance bounds, and exploring real-world applications in sequential decision-making.
 
-\textbf{Future Work}: Extending to larger ranges, theoretical guarantees, and real-world applications.
+A central principle emerges: \textbf{optimal performance requires sacrificing immediate gains for long-term structural advantages.}
 
-The core principle: optimal play sacrifices immediate gains for long-term structural advantages.
+% This work presents a dual approach to the divisibility chain game. For cooperation, our ACO algorithm achieves a \textbf{3551} total reward by balancing chain length and value. For competition, our MAARF framework reveals that strategic control—prioritizing primes and power-of-two numbers—yields 78.6\% winning rates for Alice. The core insight across both scenarios is that optimal play requires sacrificing immediate gains for long-term structural advantages.
+
+% \textbf{Cooperative Scenario}: Our ACO algorithm achieves a \textbf{3551 total reward} by balancing chain length and numerical value, outperforming traditional approaches through superior exploration-exploitation balance.
+
+% \textbf{Competitive Scenario}: MAARF reveals that strategic control yields \textbf{78.6\% winning rates} for Alice, with emergent strategies validating mathematical analysis while discovering novel tactics.
+
+% \textbf{Key Insights}:
+% \begin{itemize}
+% \item Structural control dominates immediate point maximization
+% \item Graph modeling transforms constraints into path optimization  
+% \item Adversarial self-play discovers non-obvious strategies
+% \item Reward design critically guides strategy convergence
+% \end{itemize}
+
+% \textbf{Future Work}: Extending to larger ranges, theoretical guarantees, and real-world applications.
+
+% The core principle: optimal play sacrifices immediate gains for long-term structural advantages.
 \subsection{Appendix}
 \small % 参考文献使用小字体
 \appendix % 此命令用于开始附录:cite[3]:cite[6]:cite[9]
@@ -490,4 +549,5 @@ The core principle: optimal play sacrifices immediate gains for long-term struct
 
 \bibliographystyle{plain}
 \bibliography{lib}
+
 \end{document}
